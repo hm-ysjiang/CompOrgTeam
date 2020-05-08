@@ -21,10 +21,6 @@ module alu(
 	reg [32-1:0] tmp2;
 	integer idx;
 
-	always @ (posedge rst_n) begin
-		result = 0;
-	end
-
 	always @ (*) begin
 
 		case(ALU_control)
@@ -41,18 +37,12 @@ module alu(
 				result = src1 ^ src2;
 			end
 			4'b0100: begin // sll (user-defined)
-				tmp1 = src1;
-				for(idx=0; idx<src2; idx=idx+1) begin
-					tmp2 = tmp1 << 1;
-					tmp1 = tmp2; 
-				end
+				result = src1 << src2;
 			end
+
+			/* Need more info about sra and srli */
 			4'b0101: begin // sra (user-defined)
-				tmp1 = src1;
-				for(idx=0; idx<src2; idx=idx+1) begin
-					tmp2 = tmp1 >>> 1;
-					tmp1 = tmp2;
-				end
+				result = src1 >>> src2;
 			end
 			4'b0110: begin // subtract
 				result = src1 - src2;
@@ -83,6 +73,10 @@ module alu(
 		if (ALU_control == 4'b1110) begin
 			zero = ~zero;
 		end
+
+		$display("src1 = %3d, src2 = %3d, result = %3d, aluctrl = %3d\n",
+	          src1, src2, result, ALU_control
+			  );
 	end
 
 
