@@ -37,7 +37,7 @@ assign Instr_field = (opcode==7'b1100011)?3:(
 					 
 assign Ctrl_o = (Instr_field==0 && opcode[5]==0)?9'b010100010:(
 				(Instr_field==0)?9'b000100010:(
-				(Instr_field==1 && funct3==3'b010)?9'b011110000:( //LW
+				(Instr_field==1 && opcode==7'b0000011)?9'b011110000:( //LW
 				(Instr_field==1)?9'b010100010:(
 				(Instr_field==2)?9'b010001000:(
 				(Instr_field==3)?9'b000000101:(
