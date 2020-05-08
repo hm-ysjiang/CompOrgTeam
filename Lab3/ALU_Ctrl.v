@@ -14,7 +14,7 @@ module ALU_Ctrl(
 /* Write your code HERE */
 
 assign	ALU_Ctrl_o = (ALUOp==2'b00)?			4'b0010:(		// ld, sd
-					 (ALUOp[0]==1'b1)?			4'b0110:(		// b-type
+					 (ALUOp==2'b01)?			4'b0110:(		// b-type
 					 (instr[3:0]==4'b0000)?		4'b0010:(		// add
 					 (instr[3:0]==4'b0001)?		4'b0100:(		// sll
 					 (instr[3:0]==4'b0010)?		4'b0111:(		// slt
