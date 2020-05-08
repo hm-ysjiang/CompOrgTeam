@@ -25,10 +25,10 @@ module ALU_Ctrl(
 						(instr[2:0]==3'b101)?					4'b0101:(		// sra, srai
 																4'b0)))))))))));// else
 	
-	always @ (*) begin
-					$display("instr = %4b, ALUOp = %2b, TYPE = %3b, ALUctrl = %4b\n",
-	          instr, ALUOp, TYPE, ALU_Ctrl_o
-			  );
-	end
+	// always @ (*) begin
+	// 				$display("instr = %4b, ALUOp = %2b, TYPE = %3b, ALUctrl = %4b\n",
+	//           instr, ALUOp, TYPE, ALU_Ctrl_o
+	// 		  );
+	// end
 
 endmodule
