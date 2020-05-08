@@ -13,6 +13,5 @@ module MUX_2to1(
                );
 
 	assign data_o = (select_i == 1'b0) ? data0_i : data1_i;
-	
+
 endmodule      
-          
