@@ -22,6 +22,10 @@ module alu(
 	integer idx;
 
 	always@(*) begin
+		if (rst_n) begin
+			result = 32'b0;
+		end
+
 		case(ALU_control)
 			4'b0000: begin // AND
 				result = src1 & src2;
@@ -59,8 +63,11 @@ module alu(
 			4'b1100: begin // nor
 				result = ~(src1 & src2);
 			end
-			4'b0111: begin // nand
+			4'b1101: begin // nand
 				result = ~(src1 | src2);
+			end
+			4'b1110: begin // bne
+				result = src1 - src2;
 			end
 			default: begin
 				result = 0;
@@ -73,6 +80,9 @@ module alu(
 		cout = cout & ALU_control[1] & ~ALU_control[0];
 		overflow = (src1[31] ^~ B[31]) & (src1[31] ^ sum[31]) & ALU_control[1] & ~ALU_control[0];
 
+		if (ALU_control == 4'b1110) begin
+			zero = ~zero;
+		end
 	end
 
 
