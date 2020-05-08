@@ -10,13 +10,13 @@ module Decoder(
 	output wire			ALUSrc,
 	output wire			RegWrite,
 	output wire			Branch,
-	output wire [2-1:0]	ALUOp
+	output wire [2-1:0]	ALUOp,
+	output wire	[3-1:0]	Instr_field
 	);
 	
 //Internal Signals
 wire	[7-1:0]		opcode;
 wire 	[3-1:0]		funct3;
-wire	[3-1:0]		Instr_field;
 wire	[9-1:0]		Ctrl_o;
 
 assign opcode = instr_i[6:0];

@@ -1,21 +1,21 @@
 # CompOrgTeam
 
 ## ALU_ctrl_instr
-- add 	    0000
-- sll	    0001
-- slt 	    0010
-- xor 	    0100
-- or	    0110
-- and	    0111
-- sub	    1000
-- sra	    1101
+- [x] add 	    0000
+- [x] sll	    0001
+- [x] slt 	    0010
+- [x] xor 	    0100
+- [x] or	    0110
+- [x] and	    0111
+- [x] sub	    1000
+- [x] sra	    1101
 - \-\-\-
-- addi	    -000
-- slti	    -010
-- slli	    0001
-- srli	    0101
-- andi	    -111
-- ori	    -110
+- [x] addi	    -000
+- [x] slti	    -010
+- [x] slli	    0001
+- [x] srai	    0101
+- [x] andi	    -111
+- [x] ori	    -110
 - \-\-\-
-- branch	-000
-- bne		-001
+- [ ] branch	-000
+- [ ] bne		-001

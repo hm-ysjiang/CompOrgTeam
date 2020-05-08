@@ -29,18 +29,20 @@ module Simple_Single_CPU(
 	wire 		ZERO;
 	wire 		OVERFLOW;
 	wire 		COUT;
+	// !
+	wire [2:0]	INSTR_TYPE;
 
 			
 	ProgramCounter PC(
 			.clk_i(clk_i),
 			.rst_i (rst_i),
 			.pc_i(pc_i),
-			.pc_o(pc_o) 
+			.pc_o(pc_o)
 			);
 
 	Instr_Memory IM(
 			.addr_i(pc_o),
-			.instr_o(instr)    
+			.instr_o(instr)
 			);
 			
 	Reg_File RF(
@@ -52,7 +54,7 @@ module Simple_Single_CPU(
 			.RDdata_i(ALUresult),
 			.RegWrite_i(RegWrite),
 			.RSdata_o(RSdata_o),
-			.RTdata_o(RTdata_o)   
+			.RTdata_o(RTdata_o)
 			);
 			
 	Decoder Decoder(
@@ -60,14 +62,15 @@ module Simple_Single_CPU(
 			.ALUSrc(ALUSrc),
 			.RegWrite(RegWrite),
 			.Branch(Branch),
-			.ALUOp(ALUOp)      
+			.ALUOp(ALUOp),
+			.Instr_field(INSTR_TYPE)
 			);	
 
 	// PC + 4
 	Adder Adder1(
 			.src1_i(pc_o),
 			.src2_i(4),
-			.sum_o(PC_PLUS4)    
+			.sum_o(PC_PLUS4)
 			);
 			
 	Imm_Gen ImmGen(
@@ -90,13 +93,14 @@ module Simple_Single_CPU(
 	ALU_Ctrl ALU_Ctrl(
 			.instr({instr[30],instr[14:12]}),
 			.ALUOp(ALUOp),
+			.TYPE(INSTR_TYPE),
 			.ALU_Ctrl_o(ALU_CTRL)
 			);
 			
 	Adder Adder2(
 			.src1_i(pc_o),
 			.src2_i(IMM_SHIFT1),
-			.sum_o(PC_JUMP)    
+			.sum_o(PC_JUMP)
 			);
 			
 	alu alu(
