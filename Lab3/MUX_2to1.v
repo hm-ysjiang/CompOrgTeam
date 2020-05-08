@@ -12,14 +12,7 @@ module MUX_2to1(
 	output [32-1:0] data_o
                );
 
-	always @ (*) begin
-		if (select_i == 1'b0) begin
-			data_o = data0_i;
-		end
-		if (select_i == 1'b1) begin
-			data_o = data1_i;
-		end
-	end
-
+	assign data_o = (select_i == 1'b0) ? data0_i : data1_i;
+	
 endmodule      
           
