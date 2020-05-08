@@ -15,9 +15,11 @@ module alu(
 	output reg              overflow       // 1 bit overflow            (output)
 	);
 
-	reg  [32-1:0] sum;
-	reg  [32-1:0] B;
-	wire [32-1:0] tmp;
+	reg [32-1:0] sum;
+	reg [32-1:0] B;
+	reg [32-1:0] tmp1;
+	reg [32-1:0] tmp2;
+	integer idx;
 
 	always@(*) begin
 		case(ALU_control)
@@ -34,16 +36,18 @@ module alu(
 				result = src1 ^ src2;
 			end
 			4'b0100: begin // sll (user-defined)
+				tmp1 = src1;
 				for(idx=0; idx<src2; idx=idx+1) begin
-					assign tmp = src1 << 1;
-					assign src1 = tmp; 
+					tmp2 = tmp1 << 1;
+					tmp1 = tmp2; 
 				end
 			end
 			4'b0101: begin // sra (user-defined)
+				tmp1 = src1;
 				for(idx=0; idx<src2; idx=idx+1) begin
-					assign tmp = src1 >> 1;
-					assign tmp[31] = src1[31];
-					assign src1 = tmp; 
+					tmp2 = tmp1 >> 1;
+					tmp2[31] = tmp1[31];
+					tmp1 = tmp2;
 				end
 			end
 			4'b0110: begin // subtract
