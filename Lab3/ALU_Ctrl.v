@@ -14,11 +14,16 @@ module ALU_Ctrl(
 /* Write your code HERE */
 
 assign	ALU_Ctrl_o = (ALUOp==2'b00)?			4'b0010:(		// ld, sd
-					 (ALUOp[0]==1'b1)?			4'b0110:(		// beq
+					 (ALUOp[0]==1'b1)?			4'b0110:(		// b-type
 					 (instr[3:0]==4'b0000)?		4'b0010:(		// add
-					 (instr[2:0]==3'b000)?		4'b0110:( 		// subtract
-					 (instr[0]==1'b1)?			4'b0000:(		// and
-												4'b0001)))))	// or
+					 (instr[3:0]==4'b0001)?		4'b0100:(		// sll
+					 (instr[3:0]==4'b0010)?		4'b0111:(		// slt
+					 (instr[3:0]==4'b0100)?		4'b0011:(		// xor
+					 (instr[3:0]==4'b0110)?		4'b0001:(		// or
+					 (instr[3:0]==4'b0111)?		4'b0000:(		// and
+					 (instr[3:0]==4'b1000)?		4'b0110:(		// sub
+					 (instr[3:0]==4'b1101)?		4'b0101:(		// sra
+					 							0))))))))))		// else
 
 
 endmodule
