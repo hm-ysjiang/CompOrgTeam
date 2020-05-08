@@ -10,8 +10,12 @@ module Shift_Left_1(
     output [32-1:0] data_o
     );
 
+    reg [31:0] temp;
+
+    assign data_0 = temp;
+
     always @ (*) begin
-        data_o = data_i << 1;
+        temp = data_i << 1;
     end
 
 endmodule
