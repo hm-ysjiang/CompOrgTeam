@@ -21,10 +21,11 @@ module alu(
 	reg [32-1:0] tmp2;
 	integer idx;
 
-	always@(*) begin
-		if (rst_n) begin
-			result = 32'b0;
-		end
+	always @ (posedge rst_n) begin
+		result = 0;
+	end
+
+	always @ (*) begin
 
 		case(ALU_control)
 			4'b0000: begin // AND
@@ -49,8 +50,7 @@ module alu(
 			4'b0101: begin // sra (user-defined)
 				tmp1 = src1;
 				for(idx=0; idx<src2; idx=idx+1) begin
-					tmp2 = tmp1 >> 1;
-					tmp2[31] = tmp1[31];
+					tmp2 = tmp1 >>> 1;
 					tmp1 = tmp2;
 				end
 			end
@@ -61,10 +61,10 @@ module alu(
 				result = (src1 < src2) ? 1 : 0;
 			end
 			4'b1100: begin // nor
-				result = ~(src1 & src2);
+				result = ~(src1 | src2);
 			end
 			4'b1101: begin // nand
-				result = ~(src1 | src2);
+				result = ~(src1 & src2);
 			end
 			4'b1110: begin // bne
 				result = src1 - src2;

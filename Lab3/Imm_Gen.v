@@ -49,12 +49,11 @@ module Imm_Gen(
 
 		// B-type
 		if (opcode == 7'b1100011) begin
-			temp[0]     = 1'b0;
-			temp[4:1]   = instr_i[11:8];
-			temp[10:5]  = instr_i[30:25];
-			temp[11]    = instr_i[7];
-			temp[12]    = instr_i[31];
-			temp[31:13] = {20{instr_i[31]}};
+			temp[3:0]   = instr_i[11:8];
+			temp[9:4]   = instr_i[30:25];
+			temp[10]    = instr_i[7];
+			temp[11]    = instr_i[31];
+			temp[31:12] = {20{instr_i[31]}};
 		end
 
 		// U-type (LUI)
@@ -70,12 +69,11 @@ module Imm_Gen(
 
 		// J-type (JAL)
 		if (opcode == 7'b1101111) begin
-			temp[0]     = 1'b0;
-			temp[10:1]  = instr_i[30:21];
-			temp[11]    = instr_i[20];
-			temp[19:12] = instr_i[19:12];
-			temp[20]    = instr_i[31];
-			temp[31:21] = {20{instr_i[31]}};
+			temp[9:0]  = instr_i[30:21];
+			temp[10]    = instr_i[20];
+			temp[18:11] = instr_i[19:12];
+			temp[19]    = instr_i[31];
+			temp[31:20] = {12{instr_i[31]}};
 		end
 	end
 

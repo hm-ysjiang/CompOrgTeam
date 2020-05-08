@@ -35,7 +35,7 @@ module Simple_Single_CPU(
 			
 	ProgramCounter PC(
 			.clk_i(clk_i),
-			.rst_i (rst_i),
+			.rst_i(rst_i),
 			.pc_i(pc_i),
 			.pc_o(pc_o)
 			);
