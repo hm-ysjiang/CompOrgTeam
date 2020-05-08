@@ -75,10 +75,10 @@ module alu(
 		endcase
 
 		zero = (result==0) ? 1 : 0;
-		B = (ALU_control[2]==1) ? ~src2 : src2;
-		{cout, sum} = src1 + B;
-		cout = cout & ALU_control[1] & ~ALU_control[0];
-		overflow = (src1[31] ^~ B[31]) & (src1[31] ^ sum[31]) & ALU_control[1] & ~ALU_control[0];
+		// B = (ALU_control[2]==1) ? ~src2 : src2;
+		// {cout, sum} = src1 + B;
+		// cout = cout & ALU_control[1] & ~ALU_control[0];
+		// overflow = (src1[31] ^~ B[31]) & (src1[31] ^ sum[31]) & ALU_control[1] & ~ALU_control[0];
 
 		if (ALU_control == 4'b1110) begin
 			zero = ~zero;

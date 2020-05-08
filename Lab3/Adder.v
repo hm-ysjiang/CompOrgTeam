@@ -11,8 +11,6 @@ module Adder(
 	output [32-1:0] sum_o
 	);
     
-/* Write your code HERE */
-
-assign sum_o = src1_i + src2_i;
+	assign sum_o = src1_i + src2_i;
 
 endmodule
