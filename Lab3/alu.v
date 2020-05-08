@@ -15,8 +15,9 @@ module alu(
 	output reg              overflow       // 1 bit overflow            (output)
 	);
 
-	reg [32-1:0] sum;
-	reg [32-1:0] B;
+	reg  [32-1:0] sum;
+	reg  [32-1:0] B;
+	wire [32-1:0] tmp;
 
 	always@(*) begin
 		case(ALU_control)
@@ -29,19 +30,41 @@ module alu(
 			4'b0010: begin // add
 				result = src1 + src2;
 			end
+			4'b0011: begin // xor (user-defined)
+				result = src1 ^ src2;
+			end
+			4'b0100: begin // sll (user-defined)
+				for(idx=0; idx<src2; idx=idx+1) begin
+					assign tmp = src1 << 1;
+					assign src1 = tmp; 
+				end
+			end
+			4'b0101: begin // sra (user-defined)
+				for(idx=0; idx<src2; idx=idx+1) begin
+					assign tmp = src1 >> 1;
+					assign tmp[31] = src1[31];
+					assign src1 = tmp; 
+				end
+			end
 			4'b0110: begin // subtract
 				result = src1 - src2;
 			end
 			4'b0111: begin // set less than
-				result = (src1 < src2) ? 32'b0000_0000_0000_0000_0000_0000_0000_0001 : 32'b0;
+				result = (src1 < src2) ? 1 : 0;
+			end
+			4'b1100: begin // nor
+				result = ~(src1 & src2);
+			end
+			4'b0111: begin // nand
+				result = ~(src1 | src2);
 			end
 			default: begin
-				result = 32'b0;
+				result = 0;
 			end
 		endcase
 
-		zero = (result==32'b0) ? 1'b1 : 1'b0;
-		B = (ALU_control[2]==1'b1) ? ~src2 : src2;
+		zero = (result==0) ? 1 : 0;
+		B = (ALU_control[2]==1) ? ~src2 : src2;
 		{cout, sum} = src1 + B;
 		cout = cout & ALU_control[1] & ~ALU_control[0];
 		overflow = (src1[31] ^~ B[31]) & (src1[31] ^ sum[31]) & ALU_control[1] & ~ALU_control[0];
