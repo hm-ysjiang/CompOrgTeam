@@ -1,6 +1,6 @@
 /***************************************************
-Student Name: 
-Student ID: 
+Student Name: Wei-Jie Huang
+Student ID: 0716222
 ***************************************************/
 
 `timescale 1ns/1ps
@@ -13,5 +13,6 @@ module Adder(
     
 /* Write your code HERE */
 
+assign sum_o = src1_i + src2_i;
 
 endmodule
