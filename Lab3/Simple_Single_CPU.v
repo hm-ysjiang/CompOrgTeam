@@ -29,8 +29,6 @@ module Simple_Single_CPU(
 	wire 		ZERO;
 	wire 		OVERFLOW;
 	wire 		COUT;
-	// !
-	wire [2:0]	INSTR_TYPE;
 
 			
 	ProgramCounter PC(
@@ -62,8 +60,7 @@ module Simple_Single_CPU(
 			.ALUSrc(ALUSrc),
 			.RegWrite(RegWrite),
 			.Branch(Branch),
-			.ALUOp(ALUOp),
-			.Instr_field(INSTR_TYPE)
+			.ALUOp(ALUOp)
 			);	
 
 	// PC + 4
@@ -93,7 +90,6 @@ module Simple_Single_CPU(
 	ALU_Ctrl ALU_Ctrl(
 			.instr({instr[30],instr[14:12]}),
 			.ALUOp(ALUOp),
-			.TYPE(INSTR_TYPE),
 			.ALU_Ctrl_o(ALU_CTRL)
 			);
 			

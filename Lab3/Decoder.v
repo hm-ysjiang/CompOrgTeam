@@ -10,14 +10,14 @@ module Decoder(
 	output wire			ALUSrc,
 	output wire			RegWrite,
 	output wire			Branch,
-	output wire [2-1:0]	ALUOp,
-	output wire	[3-1:0]	Instr_field
+	output wire [2-1:0]	ALUOp
 	);
 	
 	//Internal Signals
 	wire	[7-1:0]		opcode;
 	wire 	[3-1:0]		funct3;
 	wire	[9-1:0]		Ctrl_o;
+	wire	[3-1:0]		Instr_field;
 
 	assign opcode = instr_i[6:0];
 	assign funct3 = instr_i[14:12];
@@ -46,7 +46,12 @@ module Decoder(
 	assign ALUSrc 	= Ctrl_o[7];
 	assign RegWrite = Ctrl_o[5];
 	assign Branch	= Ctrl_o[2];
-	assign ALUOp 	= {Ctrl_o[1:0]};
+	assign ALUOp 	= (Instr_field==1)?2'b11:{Ctrl_o[1:0]};
+	// always @ (*) begin
+	// 	$display("Instr_field = %1d, ALUOp = %2b\n",
+	//         Instr_field, ALUOp
+	// 	);
+	// end
 
 endmodule
 

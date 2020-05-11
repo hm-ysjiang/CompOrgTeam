@@ -77,9 +77,9 @@ module alu(
 			zero = ~zero;
 		end
 
-		// $display("src1 = %3d, src2 = %3d, result = %3d, aluctrl = %3d\n",
-	    //       src1, src2, result, ALU_control
-		// 	  );
+		// $display("src1 = %3d, src2 = %3d, result = %3d, aluctrl = %4b\n",
+	    //     src1, src2, result, ALU_control
+		// );
 	end
 
 
