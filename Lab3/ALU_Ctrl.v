@@ -22,8 +22,9 @@ module ALU_Ctrl(
 						(instr[3:0]==4'b0100)?					4'b0011:(		// xor
 						(instr[2:0]==3'b110)?					4'b0001:(		// or, ori
 						(instr[2:0]==3'b111)?					4'b0000:(		// and, andi
-						(instr[2:0]==3'b101)?					4'b0101:(		// sra, srai
-																4'b0)))))))))));// else
+						(instr[3:0]==4'b0101)?					4'b1111:(		// srli
+						(instr[3:0]==4'b1101)?					4'b0101:(		// sra
+																4'b0))))))))))));// else
 	
 	// always @ (*) begin
 	// 				$display("instr = %4b, ALUOp = %2b, TYPE = %3b, ALUctrl = %4b\n",
