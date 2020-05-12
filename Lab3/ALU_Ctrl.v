@@ -12,8 +12,7 @@ module ALU_Ctrl(
 	);
 
 	assign ALU_Ctrl_o = (ALUOp==2'b00)?							4'b0010:(		// ld, sd
-						(ALUOp==2'b01 && instr[0]==1'b0)?		4'b0110:(		// beq
-						(ALUOp==2'b01 && instr[0]==1'b1)?		4'b1110:(		// bne
+						(ALUOp==2'b01)?							4'b0110:(		// beq, bne
 						(ALUOp==2'b10 && instr[3:0]==4'b1000)?	4'b0110:(		// sub
 						(instr[2:0]==3'b000)?					4'b0010:(		// add, addi
 						(instr[3:0]==4'b0001)?					4'b0100:(		// sll, slli
@@ -23,7 +22,7 @@ module ALU_Ctrl(
 						(instr[2:0]==3'b111)?					4'b0000:(		// and, andi
 						(instr[3:0]==4'b0101)?					4'b1111:(		// srli
 						(instr[3:0]==4'b1101)?					4'b0101:(		// sra
-																4'b0))))))))))));// else
+																4'b0)))))))))));// else
 	
 	// always @ (*) begin
 	// 	$display("instr = %4b, ALUOp = %2b, ALUctrl = %4b\n",

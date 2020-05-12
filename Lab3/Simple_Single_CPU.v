@@ -29,6 +29,9 @@ module Simple_Single_CPU(
 	wire 		ZERO;
 	wire 		OVERFLOW;
 	wire 		COUT;
+	wire 		PC_SRC;
+
+	assign PC_SRC = (instr[12] == 1'b0 ? ZERO : ~ZERO) & Branch;
 
 			
 	ProgramCounter PC(
@@ -113,7 +116,7 @@ module Simple_Single_CPU(
 	MUX_2to1 Mux_PCSrc(
 			.data0_i(PC_PLUS4),
 			.data1_i(PC_JUMP),
-			.select_i(Branch & ZERO),
+			.select_i(PC_SRC),
 			.data_o(pc_i)
 			);
 
