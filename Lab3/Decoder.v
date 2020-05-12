@@ -46,7 +46,7 @@ module Decoder(
 	assign ALUSrc 	= Ctrl_o[7];
 	assign RegWrite = Ctrl_o[5];
 	assign Branch	= Ctrl_o[2];
-	assign ALUOp 	= (Instr_field==1)?2'b11:{Ctrl_o[1:0]};
+	assign ALUOp 	= (Instr_field==1 && opcode!=7'b0000011)?2'b11:{Ctrl_o[1:0]};
 	// always @ (*) begin
 	// 	$display("Instr_field = %1d, ALUOp = %2b\n",
 	//         Instr_field, ALUOp

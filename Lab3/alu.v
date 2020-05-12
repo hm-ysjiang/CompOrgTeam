@@ -15,11 +15,8 @@ module alu(
 	output reg              overflow       // 1 bit overflow            (output)
 	);
 
-	reg [32-1:0] sum;
-	reg [32-1:0] B;
-	reg [32-1:0] tmp1;
-	reg [32-1:0] tmp2;
-	integer idx;
+	// reg [32-1:0] sum;
+	// reg [32-1:0] B;
 
 	always @ (*) begin
 
