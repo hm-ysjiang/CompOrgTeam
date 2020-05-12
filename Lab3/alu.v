@@ -53,9 +53,6 @@ module alu(
 			4'b1101: begin // nand
 				result = ~(src1 & src2);
 			end
-			4'b1110: begin // bne (user-defined)
-				result = src1 - src2;
-			end
 			4'b1111: begin // srli (user-defined)
 				result = src1 >> src2;
 			end
@@ -69,10 +66,6 @@ module alu(
 		// {cout, sum} = src1 + B;
 		// cout = cout & ALU_control[1] & ~ALU_control[0];
 		// overflow = (src1[31] ^~ B[31]) & (src1[31] ^ sum[31]) & ALU_control[1] & ~ALU_control[0];
-
-		if (ALU_control == 4'b1110) begin
-			zero = ~zero;
-		end
 
 		// $display("src1 = %3d, src2 = %3d, result = %3d, aluctrl = %4b\n",
 	    //     src1, src2, result, ALU_control
