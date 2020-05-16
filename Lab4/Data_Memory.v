@@ -63,9 +63,9 @@ always@(posedge clk_i) begin
 		Mem[addr_i+1] <= data_i[15:8];
 		Mem[addr_i]   <= data_i[7:0];
 	end
+	// $display("MW=%1b, addr= %2d, data_i= %2d, MR=%1b, data_o=%3d", MemWrite_i, addr_i, data_i, MemRead_i, data_o);
 end
 
 assign data_o = (MemRead_i)?{Mem[addr_i+3], Mem[addr_i+2], Mem[addr_i+1], Mem[addr_i]}:32'd0;
 
 endmodule
-
