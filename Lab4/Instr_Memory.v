@@ -16,7 +16,7 @@ reg		[32-1:0] instruction_file	[0:31];
 initial begin
     for ( i=0; i<32; i=i+1 )
 	    instruction_file[i] = 32'b0;
-    $readmemb("CO_test_data1.txt", instruction_file); 
+    $readmemb("CO_test_data2.txt", instruction_file); 
 end
 
 assign	instr_o = instruction_file[addr_i/4];
