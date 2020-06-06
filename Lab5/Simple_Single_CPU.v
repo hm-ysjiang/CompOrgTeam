@@ -42,7 +42,59 @@ module Simple_Single_CPU(
 	wire [31:0] WB_i;
 	wire [31:0] PC_BRANCH;
 
-			
+
+	// Pipeline Registers are written when each positive clock edge is triggered.
+	IF_ID IF_ID(
+			.clk_i(),
+			.rst_i(),
+			.PC(),
+			.INSTR()
+			);
+
+	ID_EX ID_EX(
+			.clk_i(),
+			.rst_i(),
+			.REG_WRITE(),
+			.MEM_TO_REG(),
+			.MEMREAD(),
+			.MEMWRITE(),
+			.ALU_SRC(),
+			.ALU_OP(),
+			.PC(),
+			.DATA1(),
+			.DATA2(),
+			.IMM(),
+			.RS1(),
+			.RS2(),
+			.RD()
+			);
+
+	EX_MEM EX_MEM(
+    		.clk_i(),
+			.rst_i(),
+    		.REG_WRITE(),
+    		.MEM_TO_REG(),
+    		.MEMREAD(),
+    		.MEMWRITE(),
+    		.PC_JUMP(),
+    		.ZERO(),
+    		.ALU_RESULT(),
+    		.WRITE_DATA(),
+    		.RD(),
+			);
+
+	MEM_WB MEM_WB(
+			.clk_i(),
+			.rst_i(),
+			.REG_WRITE(),
+			.MEM_TO_REG(),
+			.READ_DATA(),
+			.ALU_RESULT()
+			);
+
+
+
+
 	ProgramCounter PC(
 			.clk_i(clk_i),
 			.rst_i(rst_i),
