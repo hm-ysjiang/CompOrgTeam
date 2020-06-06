@@ -175,6 +175,17 @@ module Simple_Single_CPU(
 			.cout(COUT),
 			.overflow(OVERFLOW)
 			);
+	
+	ForwardingUnit ForwardingUnit(
+			.IF_ID__RS1(),
+			.IF_ID__RS2(),
+			.EX_MEM__RD(),
+			.MEM_WB__RD(),
+			.EX_MEM__REG_WRITE(),
+			.EX_MEM__REG_WRITE(),
+			.SRC1(),
+			.SRC2(),
+			);
 	////////////////////////////////////////////////////////////////////////////	EX stage
 	EX_MEM EX_MEM(
     		.clk_i(),
