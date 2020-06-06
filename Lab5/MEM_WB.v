@@ -4,21 +4,21 @@
 module MEM_WB(
     input           	 clk_i,
 	input           	 rst_i,
-    input                MEM_WB__REG_WRITE,
-    input                MEM_WB__MEM_TO_REG,
-    input       [31:0]   MEM_WB__READ_DATA,
-    input       [31:0]   MEM_WB__ALU_RESULT,
+    input                REG_WRITE,
+    input                MEM_TO_REG,
+    input       [31:0]   READ_DATA,
+    input       [31:0]   ALU_RESULT,
 
-    output wire          MEM_WB__REG_WRITE_O,
-    output wire          MEM_WB__MEM_TO_REG_O,
-    output wire [31:0]   MEM_WB__READ_DATA_O,
-    output wire [31:0]   MEM_WB__ALU_RESULT_O,
+    output wire          REG_WRITE_O,
+    output wire          MEM_TO_REG_O,
+    output wire [31:0]   READ_DATA_O,
+    output wire [31:0]   ALU_RESULT_O
     );
 
-    assign MEM_WB__REG_WRITE_O = MEM_WB__REG_WRITE;
-    assign MEM_WB__MEM_TO_REG_O = MEM_WB__MEM_TO_REG;
-    assign MEM_WB__READ_DATA_O = MEM_WB__READ_DATA;
-    assign MEM_WB__ALU_RESULT_O = MEM_WB__ALU_RESULT;
+    assign REG_WRITE_O = REG_WRITE;
+    assign MEM_TO_REG_O = MEM_TO_REG;
+    assign READ_DATA_O = READ_DATA;
+    assign ALU_RESULT_O = ALU_RESULT;
 
 
 endmodule

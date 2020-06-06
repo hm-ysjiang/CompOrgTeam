@@ -4,35 +4,35 @@
 module EX_MEM(
     input           	 clk_i,
 	input           	 rst_i,
-    input                EX_MEM__REG_WRITE,
-    input                EX_MEM__MEM_TO_REG,
-    input                EX_MEM__MEMREAD,
-    input                EX_MEM__MEMWRITE,
-    input       [31:0]   EX_MEM__PC_JUMP,
-    input                EX_MEM__ZERO,
-    input                EX_MEM__ALU_RESULT,
-    input       [31:0]	 EX_MEM__WRITE_DATA,
-    input       [4:0]	 EX_MEM__RD,
+    input                REG_WRITE,
+    input                MEM_TO_REG,
+    input                MEMREAD,
+    input                MEMWRITE,
+    input       [31:0]   PC_JUMP,
+    input                ZERO,
+    input                ALU_RESULT,
+    input       [31:0]	 WRITE_DATA,
+    input       [4:0]	 RD,
 
-    output wire          EX_MEM__REG_WRITE_O,
-    output wire          EX_MEM__MEM_TO_REG_O,
-    output wire          EX_MEM__MEMREAD_O,
-    output wire          EX_MEM__MEMWRITE_O,
-    output wire [31:0]   EX_MEM__PC_JUMP_O,
-    output wire          EX_MEM__ZERO_O,
-    output wire          EX_MEM__ALU_RESULT_O,
-    output wire [31:0]	 EX_MEM__WRITE_DATA_O,
-    output wire [4:0]	 EX_MEM__RD_O
+    output wire          REG_WRITE_O,
+    output wire          MEM_TO_REG_O,
+    output wire          MEMREAD_O,
+    output wire          MEMWRITE_O,
+    output wire [31:0]   PC_JUMP_O,
+    output wire          ZERO_O,
+    output wire          ALU_RESULT_O,
+    output wire [31:0]	 WRITE_DATA_O,
+    output wire [4:0]	 RD_O
     );
 
-    assign EX_MEM__REG_WRITE_O = EX_MEM__REG_WRITE;
-    assign EX_MEM__MEM_TO_REG_O = EX_MEM__MEM_TO_REG;
-    assign EX_MEM__MEMREAD_O = EX_MEM__MEMREAD;
-    assign EX_MEM__MEMWRITE_O = EX_MEM__MEMWRITE;
-    assign EX_MEM__PC_JUMP_O = EX_MEM__PC_JUMP;
-    assign EX_MEM__ZERO_O = EX_MEM__ZERO;
-    assign EX_MEM__ALU_RESULT_O = EX_MEM__ALU_RESULT;
-    assign EX_MEM__WRITE_DATA_O = EX_MEM__WRITE_DATA;
-    assign EX_MEM__RD_O = EX_MEM__RD;
+    assign REG_WRITE_O = REG_WRITE;
+    assign MEM_TO_REG_O = MEM_TO_REG;
+    assign MEMREAD_O = MEMREAD;
+    assign MEMWRITE_O = MEMWRITE;
+    assign PC_JUMP_O = PC_JUMP;
+    assign ZERO_O = ZERO;
+    assign ALU_RESULT_O = ALU_RESULT;
+    assign WRITE_DATA_O = WRITE_DATA;
+    assign RD_O = RD;
 
 endmodule
