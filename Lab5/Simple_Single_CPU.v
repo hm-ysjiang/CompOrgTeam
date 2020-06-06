@@ -48,7 +48,9 @@ module Simple_Single_CPU(
 			.clk_i(),
 			.rst_i(),
 			.PC(),
-			.INSTR()
+			.INSTR(),
+			.PC_O(),
+			.INSTR_O()
 			);
 
 	ID_EX ID_EX(
@@ -66,7 +68,20 @@ module Simple_Single_CPU(
 			.IMM(),
 			.RS1(),
 			.RS2(),
-			.RD()
+			.RD(),
+			.REG_WRITE_O(),
+			.MEM_TO_REG_O(),
+			.MEMREAD_O(),
+			.MEMWRITE_O(),
+			.ALU_SRC_O(),
+			.ALU_OP_O(),
+			.PC_O(),
+			.DATA1_O(),
+			.DATA2_O(),
+			.IMM_O(),
+			.RS1_O(),
+			.RS2_O(),
+			.RD_O()
 			);
 
 	EX_MEM EX_MEM(
@@ -81,6 +96,15 @@ module Simple_Single_CPU(
     		.ALU_RESULT(),
     		.WRITE_DATA(),	// refering reg which is wired to MEM.WriteData. It can be Data2(from RegFile) or IMMEDIATE
     		.RD(),
+    		.REG_WRITE_O(),
+    		.MEM_TO_REG_O(),
+    		.MEMREAD_O(),
+    		.MEMWRITE_O(),
+    		.PC_JUMP_O(),
+    		.ZERO_O(),
+    		.ALU_RESULT_O(),
+    		.WRITE_DATA_O(),	// refering reg which is wired to MEM.WriteData. It can be Data2(from RegFile) or IMMEDIATE
+    		.RD_O()
 			);
 
 	MEM_WB MEM_WB(
@@ -89,7 +113,11 @@ module Simple_Single_CPU(
 			.REG_WRITE(),
 			.MEM_TO_REG(),
 			.READ_DATA(),
-			.ALU_RESULT()
+			.ALU_RESULT(),
+			.REG_WRITE_O(),
+			.MEM_TO_REG_O(),
+			.READ_DATA_O(),
+			.ALU_RESULT_O()
 			);
 
 
