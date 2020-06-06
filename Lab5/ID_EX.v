@@ -34,19 +34,19 @@ module ID_EX(
     output wire [4:0]    RD_O
     );
 
-    assign REG_WRITE_O = REG_WRITE;
-    assign MEM_TO_REG_O = MEM_TO_REG;
-    assign MEMREAD_O = MEMREAD;
-    assign MEMWRITE_O = MEMWRITE;
-    assign ALU_SRC_O = ALU_SRC;
-    assign ALU_OP_O = ALU_OP;
-    assign PC_O = PC;
-    assign DATA1_O = DATA1;
-    assign DATA2_O = DATA2;
-    assign IMM_O = IMM;
-    assign RS1_O = RS1;
-    assign RS2_O = RS2;
-    assign RD_O = RD;
+    assign REG_WRITE_O = rst_i & REG_WRITE;
+    assign MEM_TO_REG_O = rst_i & MEM_TO_REG;
+    assign MEMREAD_O = rst_i & MEMREAD;
+    assign MEMWRITE_O = rst_i & MEMWRITE;
+    assign ALU_SRC_O = rst_i & ALU_SRC;
+    assign ALU_OP_O = rst_i & ALU_OP;
+    assign PC_O = rst_i & PC;
+    assign DATA1_O = rst_i & DATA1;
+    assign DATA2_O = rst_i & DATA2;
+    assign IMM_O = rst_i & IMM;
+    assign RS1_O = rst_i & RS1;
+    assign RS2_O = rst_i & RS2;
+    assign RD_O = rst_i & RD;
 
 
 endmodule

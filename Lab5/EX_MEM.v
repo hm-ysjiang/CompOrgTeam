@@ -25,14 +25,14 @@ module EX_MEM(
     output wire [4:0]	 RD_O
     );
 
-    assign REG_WRITE_O = REG_WRITE;
-    assign MEM_TO_REG_O = MEM_TO_REG;
-    assign MEMREAD_O = MEMREAD;
-    assign MEMWRITE_O = MEMWRITE;
-    assign PC_JUMP_O = PC_JUMP;
-    assign ZERO_O = ZERO;
-    assign ALU_RESULT_O = ALU_RESULT;
-    assign WRITE_DATA_O = WRITE_DATA;
-    assign RD_O = RD;
+    assign REG_WRITE_O = rst_i & REG_WRITE;
+    assign MEM_TO_REG_O = rst_i & MEM_TO_REG;
+    assign MEMREAD_O = rst_i & MEMREAD;
+    assign MEMWRITE_O = rst_i & MEMWRITE;
+    assign PC_JUMP_O = rst_i & PC_JUMP;
+    assign ZERO_O = rst_i & ZERO;
+    assign ALU_RESULT_O = rst_i & ALU_RESULT;
+    assign WRITE_DATA_O = rst_i & WRITE_DATA;
+    assign RD_O = rst_i & RD;
 
 endmodule

@@ -79,7 +79,7 @@ module Simple_Single_CPU(
     		.PC_JUMP(),
     		.ZERO(),
     		.ALU_RESULT(),
-    		.WRITE_DATA(),
+    		.WRITE_DATA(),	// refering reg which is wired to MEM.WriteData. It can be Data2(from RegFile) or IMMEDIATE
     		.RD(),
 			);
 

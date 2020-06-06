@@ -15,10 +15,10 @@ module MEM_WB(
     output wire [31:0]   ALU_RESULT_O
     );
 
-    assign REG_WRITE_O = REG_WRITE;
-    assign MEM_TO_REG_O = MEM_TO_REG;
-    assign READ_DATA_O = READ_DATA;
-    assign ALU_RESULT_O = ALU_RESULT;
+    assign REG_WRITE_O = rst_i & REG_WRITE;
+    assign MEM_TO_REG_O = rst_i & MEM_TO_REG;
+    assign READ_DATA_O = rst_i & READ_DATA;
+    assign ALU_RESULT_O = rst_i & ALU_RESULT;
 
 
 endmodule
