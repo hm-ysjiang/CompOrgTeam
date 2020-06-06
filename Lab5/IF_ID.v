@@ -10,8 +10,22 @@ module IF_ID(
     output wire [31:0]   INSTR_O
     );
 
-    assign PC_O = rst_i & PC;
-    assign INSTR_O = rst_i & INSTR;
+    reg         [31:0]   pc;
+    reg         [31:0]   instr;
+    assign PC_O = pc;
+    assign INSTR_O = instr;
+
+    always@(posedge clk_i) begin
+        if(!rst_i) begin
+            pc = 0;
+            instr = 0;
+        end
+        else begin
+            pc = PC;
+            instr = INSTR;
+        end
+    end
+
 
 
 endmodule
