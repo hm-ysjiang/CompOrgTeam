@@ -133,18 +133,20 @@ module Pipeline_CPU(
 			.Imm_Gen_o(IMM)
 			);
 
-	ICantChangeTheRegFileSoIPutThisHere_module ICCTRFSIPTH(
-			.dataRS_i(RSdata_o),
-			.dataRT_i(RTdata_o),
-			.data_WB(ALUresult_WB),
-			.rs(INSTR_ID[19:15]),
-			.rt(INSTR_ID[24:20]),
-			.RD_WB(RD_WB),
-			.RegWrite_WB(RegWrite_WB),
-			.dataRS_o(RSdata_o_ICCTRFSIPTH),
-			.dataRT_o(RTdata_o_ICCTRFSIPTH)
+	MUX_2to1 RS_ICCTRFSIPTH(
+			.data0_i(RSdata_o),
+			.data1_i(ALUresult_WB),
+			.select_i((RegWrite_WB == 1'b1 && RD_WB == INSTR_ID[19:15])),
+			.data_o(RSdata_o_ICCTRFSIPTH)
 	);
-				
+
+	MUX_2to1 RT_ICCTRFSIPTH(
+			.data0_i(RTdata_o),
+			.data1_i(ALUresult_WB),
+			.select_i((RegWrite_WB == 1'b1 && RD_WB == INSTR_ID[24:20])),
+			.data_o(RTdata_o_ICCTRFSIPTH)
+	);
+	
 	ALU_Ctrl ALU_Ctrl(
 			.instr({INSTR_ID[30],INSTR_ID[14:12]}),
 			.ALUOp(ALUOp),
