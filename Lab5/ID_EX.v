@@ -69,6 +69,8 @@ module ID_EX(
             rs = RS;
             rt = RT;
             rd = RD;
+            // $display("IDEX: ctrl=%4b, rs=%2d, rt=%2d, rd=%2d, imm=%5d, data1=%5d, data2=%5d, rw=%1b"
+            // , alu_ctrl, rs, rt, rd, imm, data1, data2, reg_write);
         end
     end
 

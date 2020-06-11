@@ -109,7 +109,7 @@ module Pipeline_CPU(
 			.rst_i(rst_i),
 			.RSaddr_i(INSTR_ID[19:15]),
 			.RTaddr_i(INSTR_ID[24:20]),
-			.RDaddr_i(INSTR_ID[11:7]),
+			.RDaddr_i(RD_WB),
 			.RDdata_i(ALUresult_WB),
 			.RegWrite_i(RegWrite_WB),
 			.RSdata_o(RSdata_o),

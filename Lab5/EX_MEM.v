@@ -31,6 +31,7 @@ module EX_MEM(
             reg_write = REG_WRITE;
             alu_result = ALU_RESULT;
             rd = RD;
+            // $display("EXMEM: rw=%1b, res=%5d, rd=%2d", reg_write, alu_result, rd);
         end
     end
 
