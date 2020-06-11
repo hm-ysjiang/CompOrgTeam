@@ -4,46 +4,77 @@ Student ID: 0716222、0716214
 ***************************************************/
 
 `timescale 1ns/1ps
-module Simple_Single_CPU(
+module Pipeline_CPU(
 	input clk_i,
 	input rst_i
 	);
 
+	///////////////////////////////////////////////IF
 	wire [31:0] pc_i;
 	wire [31:0] pc_o;
 	wire [31:0] PC_PLUS4;
-
 	wire [31:0] instr;
-	wire [31:0] ALUresult;
+
+	assign pc_i = PC_PLUS4;
+	///////////////////////////////////////////////IF
+	wire [31:0] INSTR_ID;
+	///////////////////////////////////////////////ID
 	wire [31:0] RSdata_o;
 	wire [31:0] RTdata_o;
-	wire ALUSrc;
-	wire Branch;
-	wire [1:0] ALUOp;
 
-	wire [31:0] IMM;
-	wire [31:0] ALU_SRC2;
-	wire [3:0]  ALU_CTRL;
-	wire 		ZERO;
-	wire 		OVERFLOW;
-	wire 		COUT;
-
-	wire [31:0] DM_o;
+	wire		ALUSrc;
+	wire		Branch;
+	wire [ 1:0]	Jump;
 	wire      	MemtoReg;
 	wire      	RegWrite;
 	wire      	MemRead;
 	wire      	MemWrite;
-	wire [1:0]	Jump;
-	wire [31:0] DATA_WB;
-	wire [31:0] WB_i;
-	wire [31:0] PC_BRANCH;
 
+	wire [ 1:0] ALUOp;
+	wire [ 3:0] ALU_CTRL;
 
-	// Pipeline Registers are written when each positive clock edge is triggered.
+	wire [31:0] IMM;
+
+	wire [31:0] RSdata_o_ICCTRFSIPTH;
+	wire [31:0] RTdata_o_ICCTRFSIPTH;
+	///////////////////////////////////////////////ID
+	wire 		RegWrite_EX;
+	wire		ALUSrc_EX;
+	wire [ 3:0] ALU_CTRL_EX;
+	wire [31:0] RSdata_o_EX;
+	wire [31:0] RTdata_o_EX;
+	wire [31:0] IMM_EX;
+	wire [ 4:0] RS_EX;
+	wire [ 4:0] RT_EX;
+	wire [ 4:0] RD_EX;
+	///////////////////////////////////////////////EX
+	wire [31:0] ALU_SRC2;
+	wire [31:0] ALUresult;
+	wire 		ZERO;
+	wire 		OVERFLOW;
+	wire 		COUT;
+	///////////////////////////////////////////////EX
+	wire 		RegWrite_MEM;
+	wire [31:0] ALUresult_MEM;
+	wire [ 4:0] RD_MEM;
+
+	wire [31:0] RSdata_o_FORWARDED;
+	wire [31:0] RTdata_o_FORWARDED;
+	wire [ 1:0] FORWARD_SRC1;
+	wire [ 1:0] FORWARD_SRC2;
+	///////////////////////////////////////////////MEM
+	wire [31:0] DM_o;
+	///////////////////////////////////////////////MEM
+	wire 		RegWrite_WB;
+	wire [31:0] ALUresult_WB;
+	wire [ 4:0] RD_WB;
+	///////////////////////////////////////////////WB
+
+	///////////////////////////////////////////////WB
+
+	/***************************************************/
 
 	////////////////////////////////////////////////////////////////////////////	IF stage
-
-	assign pc_i = PC_PLUS4;
 
 	ProgramCounter PC(
 			.clk_i(clk_i),
@@ -65,21 +96,13 @@ module Simple_Single_CPU(
 			);
 
 	////////////////////////////////////////////////////////////////////////////	IF stage
-
-	wire INSTR_ID;
-
 	IF_ID IF_ID(
 			.clk_i(clk_i),
 			.rst_i(rst_i),
 			.INSTR(instr),
 			.INSTR_O(INSTR_ID)
 			);
-
 	////////////////////////////////////////////////////////////////////////////	ID stage
-
-	wire [31:0] RSdata_o_ICCTRFSIPTH;
-	wire [31:0] RTdata_o_ICCTRFSIPTH;
-
 	
 	Reg_File RF(
 			.clk_i(clk_i),
@@ -87,14 +110,14 @@ module Simple_Single_CPU(
 			.RSaddr_i(INSTR_ID[19:15]),
 			.RTaddr_i(INSTR_ID[24:20]),
 			.RDaddr_i(INSTR_ID[11:7]),
-			.RDdata_i(WB_i),
-			.RegWrite_i(RegWrite),
+			.RDdata_i(ALUresult_WB),
+			.RegWrite_i(RegWrite_WB),
 			.RSdata_o(RSdata_o),
 			.RTdata_o(RTdata_o)
 			);
 			
 	Decoder Decoder(
-			.instr_i(instr_ID),
+			.instr_i(INSTR_ID),
 			.ALUSrc(ALUSrc),
 			.MemtoReg(MemtoReg),
 			.RegWrite(RegWrite),
@@ -106,7 +129,7 @@ module Simple_Single_CPU(
 			);	
 			
 	Imm_Gen ImmGen(
-			.instr_i(instr_ID),
+			.instr_i(INSTR_ID),
 			.Imm_Gen_o(IMM)
 			);
 
@@ -123,23 +146,12 @@ module Simple_Single_CPU(
 	);
 				
 	ALU_Ctrl ALU_Ctrl(
-			.instr({instr_ID[30],instr_ID[14:12]}),
+			.instr({INSTR_ID[30],INSTR_ID[14:12]}),
 			.ALUOp(ALUOp),
 			.ALU_Ctrl_o(ALU_CTRL)
 			);
 
 	////////////////////////////////////////////////////////////////////////////	ID stage
-
-	wire 		RegWrite_EX;
-	wire		ALUSrc_EX;
-	wire [ 3:0] ALU_CTRL_EX;
-	wire [31:0] RSdata_o_EX;
-	wire [31:0] RTdata_o_EX;
-	wire [31:0] IMM_EX;
-	wire [ 4:0] RS_EX;
-	wire [ 4:0] RT_EX;
-	wire [ 4:0] RD_EX;
-
 	ID_EX ID_EX(
 			.clk_i(clk_i),
 			.rst_i(rst_i),
@@ -163,11 +175,6 @@ module Simple_Single_CPU(
 			.RD_O(RD_EX)
 			);
 	////////////////////////////////////////////////////////////////////////////	EX stage
-
-	wire [31:0] RSdata_o_FORWARDED;
-	wire [31:0] RTdata_o_FORWARDED;
-	wire [ 1:0] FORWARD_SRC1;
-	wire [ 1:0] FORWARD_SRC2;
 
 	MUX_3to1 Mux_ForwardRS(
 			.data0_i(RSdata_o_EX),
@@ -204,22 +211,17 @@ module Simple_Single_CPU(
 			);
 	
 	ForwardingUnit ForwardingUnit(
-			.IF_ID__RS1(RS_EX),
-			.IF_ID__RS2(RT_EX),
+			.ID_EX__RS1(RS_EX),
+			.ID_EX__RS2(RT_EX),
 			.EX_MEM__RD(RD_MEM),
 			.MEM_WB__RD(RD_WB),
 			.EX_MEM__REG_WRITE(RegWrite_MEM),
 			.MEM_WB__REG_WRITE(RegWrite_WB),
 			.SRC1(FORWARD_SRC1),
-			.SRC2(FORWARD_SRC2),
+			.SRC2(FORWARD_SRC2)
 			);
 	
 	////////////////////////////////////////////////////////////////////////////	EX stage
-	
-	wire 		RegWrite_MEM;
-	wire [31:0] ALUresult_MEM;
-	wire [ 4:0] RD_MEM;
-
 	EX_MEM EX_MEM(
     		.clk_i(clk_i),
 			.rst_i(rst_i),
@@ -231,7 +233,7 @@ module Simple_Single_CPU(
     		.RD_O(RD_MEM)
 			);
 	////////////////////////////////////////////////////////////////////////////	MEM stage
-	// Lab4
+
 	Data_Memory Data_Memory(
 			.clk_i(clk_i),
 			.addr_i(ALUresult_MEM),
@@ -242,11 +244,6 @@ module Simple_Single_CPU(
 			);
 
 	////////////////////////////////////////////////////////////////////////////	MEM stage
-	
-	wire 		RegWrite_WB;
-	wire [31:0] ALUresult_WB;
-	wire [ 4:0] RD_WB;
-
 	MEM_WB MEM_WB(
 			.clk_i(clk_i),
 			.rst_i(rst_i),
