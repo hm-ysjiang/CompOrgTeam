@@ -11,6 +11,8 @@ module Simple_Single_CPU(
 
 	wire [31:0] pc_i;
 	wire [31:0] pc_o;
+	wire [31:0] PC_PLUS4;
+
 	wire [31:0] instr;
 	wire [31:0] ALUresult;
 	wire [31:0] RSdata_o;
@@ -19,18 +21,12 @@ module Simple_Single_CPU(
 	wire Branch;
 	wire [1:0] ALUOp;
 
-	wire [31:0] PC_PLUS4;
 	wire [31:0] IMM;
-	wire [31:0] IMM_SHIFT1;
 	wire [31:0] ALU_SRC2;
 	wire [3:0]  ALU_CTRL;
-	wire [31:0] PC_JUMP;
 	wire 		ZERO;
 	wire 		OVERFLOW;
 	wire 		COUT;
-	wire 		PC_SRC;
-
-	assign PC_SRC = (instr[14] == 1'b1) ? ((instr[12] == 1'b0 ? ALUresult[0] : ~ALUresult[0]) & Branch) : ((instr[12] == 1'b0 ? ZERO : ~ZERO) & Branch);
 
 	wire [31:0] DM_o;
 	wire      	MemtoReg;
@@ -44,84 +40,10 @@ module Simple_Single_CPU(
 
 
 	// Pipeline Registers are written when each positive clock edge is triggered.
-	IF_ID IF_ID(
-			.clk_i(),
-			.rst_i(),
-			.PC(),
-			.INSTR(),
-			.PC_O(),
-			.INSTR_O()
-			);
 
-	ID_EX ID_EX(
-			.clk_i(),
-			.rst_i(),
-			.REG_WRITE(),
-			.MEM_TO_REG(),
-			.MEMREAD(),
-			.MEMWRITE(),
-			.ALU_SRC(),
-			.ALU_OP(),
-			.PC(),
-			.DATA1(),
-			.DATA2(),
-			.IMM(),
-			.RS1(),
-			.RS2(),
-			.RD(),
-			.REG_WRITE_O(),
-			.MEM_TO_REG_O(),
-			.MEMREAD_O(),
-			.MEMWRITE_O(),
-			.ALU_SRC_O(),
-			.ALU_OP_O(),
-			.PC_O(),
-			.DATA1_O(),
-			.DATA2_O(),
-			.IMM_O(),
-			.RS1_O(),
-			.RS2_O(),
-			.RD_O()
-			);
+	////////////////////////////////////////////////////////////////////////////	IF stage
 
-	EX_MEM EX_MEM(
-    		.clk_i(),
-			.rst_i(),
-    		.REG_WRITE(),
-    		.MEM_TO_REG(),
-    		.MEMREAD(),
-    		.MEMWRITE(),
-    		.PC_JUMP(),
-    		.ZERO(),
-    		.ALU_RESULT(),
-    		.WRITE_DATA(),	// refering reg which is wired to MEM.WriteData. It can be Data2(from RegFile) or IMMEDIATE
-    		.RD(),
-    		.REG_WRITE_O(),
-    		.MEM_TO_REG_O(),
-    		.MEMREAD_O(),
-    		.MEMWRITE_O(),
-    		.PC_JUMP_O(),
-    		.ZERO_O(),
-    		.ALU_RESULT_O(),
-    		.WRITE_DATA_O(),	// refering reg which is wired to MEM.WriteData. It can be Data2(from RegFile) or IMMEDIATE
-    		.RD_O()
-			);
-
-	MEM_WB MEM_WB(
-			.clk_i(),
-			.rst_i(),
-			.REG_WRITE(),
-			.MEM_TO_REG(),
-			.READ_DATA(),
-			.ALU_RESULT(),
-			.REG_WRITE_O(),
-			.MEM_TO_REG_O(),
-			.READ_DATA_O(),
-			.ALU_RESULT_O()
-			);
-
-
-
+	assign pc_i = PC_PLUS4;
 
 	ProgramCounter PC(
 			.clk_i(clk_i),
@@ -130,17 +52,41 @@ module Simple_Single_CPU(
 			.pc_o(pc_o)
 			);
 
+	// PC + 4
+	Adder Adder1(
+			.src1_i(pc_o),
+			.src2_i(4),
+			.sum_o(PC_PLUS4)
+			);
+
 	Instr_Memory IM(
 			.addr_i(pc_o),
 			.instr_o(instr)
 			);
-			
+
+	////////////////////////////////////////////////////////////////////////////	IF stage
+
+	wire INSTR_ID;
+
+	IF_ID IF_ID(
+			.clk_i(clk_i),
+			.rst_i(rst_i),
+			.INSTR(instr),
+			.INSTR_O(INSTR_ID)
+			);
+
+	////////////////////////////////////////////////////////////////////////////	ID stage
+
+	wire [31:0] RSdata_o_ICCTRFSIPTH;
+	wire [31:0] RTdata_o_ICCTRFSIPTH;
+
+	
 	Reg_File RF(
 			.clk_i(clk_i),
 			.rst_i(rst_i),
-			.RSaddr_i(instr[19:15]),
-			.RTaddr_i(instr[24:20]),
-			.RDaddr_i(instr[11:7]),
+			.RSaddr_i(INSTR_ID[19:15]),
+			.RTaddr_i(INSTR_ID[24:20]),
+			.RDaddr_i(INSTR_ID[11:7]),
 			.RDdata_i(WB_i),
 			.RegWrite_i(RegWrite),
 			.RSdata_o(RSdata_o),
@@ -148,7 +94,7 @@ module Simple_Single_CPU(
 			);
 			
 	Decoder Decoder(
-			.instr_i(instr),
+			.instr_i(instr_ID),
 			.ALUSrc(ALUSrc),
 			.MemtoReg(MemtoReg),
 			.RegWrite(RegWrite),
@@ -158,92 +104,164 @@ module Simple_Single_CPU(
 			.ALUOp(ALUOp),
 			.Jump(Jump)
 			);	
-
-	// PC + 4
-	Adder Adder1(
-			.src1_i(pc_o),
-			.src2_i(4),
-			.sum_o(PC_PLUS4)
-			);
 			
 	Imm_Gen ImmGen(
-			.instr_i(instr),
+			.instr_i(instr_ID),
 			.Imm_Gen_o(IMM)
 			);
-		
-	Shift_Left_1 SL1(
-			.data_i(IMM),
-			.data_o(IMM_SHIFT1)
-			);
-		
-	MUX_2to1 Mux_ALUSrc(
-			.data0_i(RTdata_o),
-			.data1_i(IMM),
-			.select_i(ALUSrc),
-			.data_o(ALU_SRC2)
-			);
+
+	ICantChangeTheRegFileSoIPutThisHere_module ICCTRFSIPTH(
+			.dataRS_i(RSdata_o),
+			.dataRT_i(RTdata_o),
+			.data_WB(ALUresult_WB),
+			.rs(INSTR_ID[19:15]),
+			.rt(INSTR_ID[24:20]),
+			.RD_WB(RD_WB),
+			.RegWrite_WB(RegWrite_WB),
+			.dataRS_o(RSdata_o_ICCTRFSIPTH),
+			.dataRT_o(RTdata_o_ICCTRFSIPTH)
+	);
 				
 	ALU_Ctrl ALU_Ctrl(
-			.instr({instr[30],instr[14:12]}),
+			.instr({instr_ID[30],instr_ID[14:12]}),
 			.ALUOp(ALUOp),
 			.ALU_Ctrl_o(ALU_CTRL)
 			);
-			
-	Adder Adder2(
-			.src1_i(pc_o),
-			.src2_i(IMM_SHIFT1),
-			.sum_o(PC_JUMP)
+
+	////////////////////////////////////////////////////////////////////////////	ID stage
+
+	wire 		RegWrite_EX;
+	wire		ALUSrc_EX;
+	wire [ 3:0] ALU_CTRL_EX;
+	wire [31:0] RSdata_o_EX;
+	wire [31:0] RTdata_o_EX;
+	wire [31:0] IMM_EX;
+	wire [ 4:0] RS_EX;
+	wire [ 4:0] RT_EX;
+	wire [ 4:0] RD_EX;
+
+	ID_EX ID_EX(
+			.clk_i(clk_i),
+			.rst_i(rst_i),
+			.REG_WRITE(RegWrite),
+			.ALU_SRC(ALUSrc),
+			.ALU_CTRL(ALU_CTRL),
+			.DATA1(RSdata_o_ICCTRFSIPTH),
+			.DATA2(RTdata_o_ICCTRFSIPTH),
+			.IMM(IMM),
+			.RS(INSTR_ID[19:15]),
+			.RT(INSTR_ID[24:20]),
+			.RD(INSTR_ID[11:7]),
+			.REG_WRITE_O(RegWrite_EX),
+			.ALU_SRC_O(ALUSrc_EX),
+			.ALU_CTRL_O(ALU_CTRL_EX),
+			.DATA1_O(RSdata_o_EX),
+			.DATA2_O(RTdata_o_EX),
+			.IMM_O(IMM_EX),
+			.RS_O(RS_EX),
+			.RT_O(RT_EX),
+			.RD_O(RD_EX)
+			);
+	////////////////////////////////////////////////////////////////////////////	EX stage
+
+	wire [31:0] RSdata_o_FORWARDED;
+	wire [31:0] RTdata_o_FORWARDED;
+	wire [ 1:0] FORWARD_SRC1;
+	wire [ 1:0] FORWARD_SRC2;
+
+	MUX_3to1 Mux_ForwardRS(
+			.data0_i(RSdata_o_EX),
+			.data1_i(ALUresult_MEM),
+			.data2_i(ALUresult_WB),
+			.select_i(FORWARD_SRC1),
+			.data_o(RSdata_o_FORWARDED)
+			);
+
+	MUX_3to1 Mux_ForwardRT(
+			.data0_i(RTdata_o_EX),
+			.data1_i(ALUresult_MEM),
+			.data2_i(ALUresult_WB),
+			.select_i(FORWARD_SRC2),
+			.data_o(RTdata_o_FORWARDED)
+			);
+		
+	MUX_2to1 Mux_ALUSrc(
+			.data0_i(RTdata_o_FORWARDED),
+			.data1_i(IMM_EX),
+			.select_i(ALUSrc_EX),
+			.data_o(ALU_SRC2)
 			);
 			
 	alu alu(
 			.rst_n(rst_i),
-			.src1(RSdata_o),
+			.src1(RSdata_o_FORWARDED),
 			.src2(ALU_SRC2),
-			.ALU_control(ALU_CTRL),
+			.ALU_control(ALU_CTRL_EX),
 			.zero(ZERO),
 			.result(ALUresult),
 			.cout(COUT),
 			.overflow(OVERFLOW)
 			);
-
-	MUX_2to1 Mux_PCSrc(
-			.data0_i(PC_PLUS4),
-			.data1_i(PC_JUMP),
-			.select_i(PC_SRC),
-			.data_o(PC_BRANCH)
+	
+	ForwardingUnit ForwardingUnit(
+			.IF_ID__RS1(RS_EX),
+			.IF_ID__RS2(RT_EX),
+			.EX_MEM__RD(RD_MEM),
+			.MEM_WB__RD(RD_WB),
+			.EX_MEM__REG_WRITE(RegWrite_MEM),
+			.MEM_WB__REG_WRITE(RegWrite_WB),
+			.SRC1(FORWARD_SRC1),
+			.SRC2(FORWARD_SRC2),
 			);
+	
+	////////////////////////////////////////////////////////////////////////////	EX stage
+	
+	wire 		RegWrite_MEM;
+	wire [31:0] ALUresult_MEM;
+	wire [ 4:0] RD_MEM;
 
+	EX_MEM EX_MEM(
+    		.clk_i(clk_i),
+			.rst_i(rst_i),
+    		.REG_WRITE(RegWrite_EX),
+    		.ALU_RESULT(ALUresult),
+    		.RD(RD_EX),
+    		.REG_WRITE_O(RegWrite_MEM),
+    		.ALU_RESULT_O(ALUresult_MEM),
+    		.RD_O(RD_MEM)
+			);
+	////////////////////////////////////////////////////////////////////////////	MEM stage
 	// Lab4
 	Data_Memory Data_Memory(
 			.clk_i(clk_i),
-			.addr_i(ALUresult),
+			.addr_i(ALUresult_MEM),
 			.data_i(RTdata_o),
-			.MemRead_i(MemRead),
-			.MemWrite_i(MemWrite),
+			.MemRead_i(1'b0),
+			.MemWrite_i(1'b0),
 			.data_o(DM_o)
 			);
 
-	MUX_2to1 Mux_MemToRegSrc(
-			.data0_i(ALUresult),
-			.data1_i(DM_o),
-			.select_i(MemtoReg),
-			.data_o(DATA_WB)
-			);
+	////////////////////////////////////////////////////////////////////////////	MEM stage
+	
+	wire 		RegWrite_WB;
+	wire [31:0] ALUresult_WB;
+	wire [ 4:0] RD_WB;
 
-	MUX_3to1 Mux_WBSrc(
-			.data0_i(DATA_WB),
-			.data1_i(PC_PLUS4),
-			.data2_i(32'b0),
-			.select_i(Jump),
-			.data_o(WB_i)
+	MEM_WB MEM_WB(
+			.clk_i(clk_i),
+			.rst_i(rst_i),
+			.REG_WRITE(RegWrite_MEM),
+			.ALU_RESULT(ALUresult_MEM),
+    		.RD(RD_MEM),
+			.REG_WRITE_O(RegWrite_WB),
+			.ALU_RESULT_O(ALUresult_WB),
+    		.RD_O(RD_WB)
 			);
+	////////////////////////////////////////////////////////////////////////////	WB stage
 
-	MUX_3to1 Mux_PCJumpSrc(
-			.data0_i(PC_BRANCH),
-			.data1_i(IMM_SHIFT1),
-			.data2_i(RSdata_o),
-			.select_i(Jump),
-			.data_o(pc_i)
-			);
+	////////////////////////////////////////////////////////////////////////////	WB stage
+
+
+
 
 endmodule

@@ -6,9 +6,9 @@ module ForwardingUnit(
 	input        [4:0]    EX_MEM__RD,
 	input        [4:0]    MEM_WB__RD,
 	input                 EX_MEM__REG_WRITE,
-	input                 EX_MEM__REG_WRITE,
-    output wire           SRC1,
-    output wire           SRC2,
+	input                 MEM_WB__REG_WRITE,
+    output wire  [1:0]    SRC1,
+    output wire  [1:0]    SRC2,
 	);
 
     // 0 : original signal, 1 : EX/MEM, 2 : MEM/WB

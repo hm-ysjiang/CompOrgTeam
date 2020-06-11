@@ -7,7 +7,7 @@ module ID_EX(
     
     input                REG_WRITE,
     input                ALU_SRC,
-    input       [1:0] 	 ALU_OP,
+    input       [3:0] 	 ALU_CTRL,
     input       [31:0]   DATA1,
     input       [31:0]   DATA2,
     input       [31:0]   IMM,
@@ -17,7 +17,7 @@ module ID_EX(
 
     output wire          REG_WRITE_O,
     output wire          ALU_SRC_O,
-    output wire [1:0] 	 ALU_OP_O,
+    output wire [3:0] 	 ALU_CTRL_O,
     output wire [31:0]   DATA1_O,
     output wire [31:0]   DATA2_O,
     output wire [31:0]   IMM_O,
@@ -29,7 +29,7 @@ module ID_EX(
 
     reg                  reg_write;
     reg                  alu_src;
-    reg         [1:0]    alu_op;
+    reg         [3:0]    alu_ctrl;
     reg         [31:0]   data1;
     reg         [31:0]   data2;
     reg         [31:0]   imm;
@@ -39,7 +39,7 @@ module ID_EX(
 
     assign REG_WRITE_O = reg_write;
     assign ALU_SRC_O = alu_src;
-    assign ALU_OP_O = alu_op;
+    assign ALU_CTRL_O = alu_ctrl;
     assign DATA1_O = data1;
     assign DATA2_O = data2;
     assign IMM_O = imm;
@@ -51,7 +51,7 @@ module ID_EX(
         if(!rst_i) begin
             reg_write = 0;
             alu_src = 0;
-            alu_op = 0;
+            alu_ctrl = 0;
             data1 = 0;
             data2 = 0;
             imm = 0;
@@ -62,7 +62,7 @@ module ID_EX(
         else begin
             reg_write = REG_WRITE;
             alu_src = ALU_SRC;
-            alu_op = ALU_OP;
+            alu_ctrl = ALU_CTRL;
             data1 = DATA1;
             data2 = DATA2;
             imm = IMM;
