@@ -79,6 +79,7 @@ void memory_access(char C){
         for(int i=0; i<D_Cache.size(); i++){
             unsigned int index = D_Cache[i] % block_num, tag = D_Cache[i] / block_num;
             if(map[index].valid==false){ // compulsory miss
+                map[index].valid = true;
                 map[index].index = index;
                 map[index].tag = tag;
                 miss_num++;
