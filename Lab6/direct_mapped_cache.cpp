@@ -4,8 +4,8 @@
 #include <fstream>
 using namespace std;
 
-#define CACHE_SIZE (4) // 4K
-#define BLOCK_SIZE (16)
+#define CACHE_SIZE (16) // 4K
+#define BLOCK_SIZE (64)
 
 vector<unsigned int> D_Cache;
 vector<unsigned int> I_Cache;
@@ -39,6 +39,14 @@ void input(void){
     }
     ifs.close();
 
+    return;
+}
+void print_result(const int &hit_num, const int &miss_num){
+    float hit_rate = (float) hit_num / (float)(hit_num + miss_num), miss_rate = (float) miss_num / (float)(hit_num + miss_num);
+    cout << "Cache_size: " << CACHE_SIZE << '\n' <<
+            "Block_size: " << BLOCK_SIZE << '\n' <<
+            "Hit rate: " << fixed << setprecision(2) << hit_rate*100  << "% (" << hit_num  << "),  " <<
+            "Miss rate: " << miss_rate*100 << "% (" << miss_num << ")\n";
     return;
 }
 void memory_access(char C){
@@ -91,14 +99,6 @@ void memory_access(char C){
     else{ return; }
     print_result(hit_num, miss_num);
 
-}
-void print_result(const int &hit_num, const int &miss_num){
-    float hit_rate = hit_num / (hit_num + miss_num), miss_rate = miss_num / (hit_num + miss_num);
-    cout << "Cache_size: " << CACHE_SIZE << '\n' <<
-            "Block_size: " << BLOCK_SIZE << '\n' <<
-            "Hit rate: " << fixed << setprecision(2) << hit_rate  << "% (" << hit_num  << "),  " <<
-            "Miss rate: " << miss_rate << "% (" << miss_num << ")\n";
-    return;
 }
 
 int main(void){
