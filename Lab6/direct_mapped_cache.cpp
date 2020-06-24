@@ -1,88 +1,113 @@
 #include <cmath>  // log2()
 #include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <sstream>
-#include <vector>
 using namespace std;
 
-#define CACHE_SIZE (4)  // 4K
-#define BLOCK_SIZE (16)
+int cache[] = {4, 16, 64, 256},
+    block[] = {16, 32, 64, 128, 256};
 
-typedef string INPUT_T;  // change different type may not work
-vector<INPUT_T> D_Cache;
-vector<INPUT_T> I_Cache;
-
-int hit_num = 0, miss_num = 0, access_num = 0;
-int tag_digit = 8 - (int)log2(CACHE_SIZE * 1024 / BLOCK_SIZE) - (int)log2(BLOCK_SIZE),
-    index_digit = (int)log2(CACHE_SIZE * 1024 / BLOCK_SIZE);
+vector<unsigned int> D_Cache;
+vector<unsigned int> I_Cache;
 
 typedef struct element {
+    bool valid;
     int tag, index;
-    element() {}
-    element(string in) {
-        stringstream ss(in);
-        ss << hex << in.substr(0, tag_digit);
-        ss >> tag;
-        ss << hex << in.substr(tag_digit, index_digit);
-        ss >> index;
-    }
+    element()
+        : valid(false), tag(0), index(0) {}
 } element;
 
 void input(void) {
     ifstream ifs;
     if (ifs.is_open())
-        throw("ifs has been already opened.\n");
+        throw("ifs has been opened already.\n");
     ifs.open("DCACHE.txt", ifstream::in);
 
-    INPUT_T input;
-    while (ifs >> input)
+    unsigned int input;
+    while (ifs >> hex >> input) {
         D_Cache.push_back(input);
+    }
     ifs.close();
 
     if (ifs.is_open())
-        throw("ifs has been already opened.\n");
+        throw("ifs has been opened already.\n");
     ifs.open("ICACHE.txt", ifstream::in);
-    while (ifs >> input)
+    while (ifs >> hex >> input) {
         I_Cache.push_back(input);
+    }
     ifs.close();
 
     return;
 }
-void memory_access(void) {
-    vector<pair<bool, element>> map(CACHE_SIZE * 1024 / BLOCK_SIZE, pair<bool, element>(false, element()));
-
-    for (int i = 0; i < I_Cache.size(); i++) {
-        element access(I_Cache[i]);
-        if (map[access.index].first == false) {  // compulsory miss
-            map[access.index].second = access;
-            map[access.index].first = true;
-            miss_num++;
-        }
-        else {
-            if (map[access.index].second.tag == access.tag) {
-                hit_num++;
-            }
-            else {
-                map[access.index].second.tag = access.tag;
+void print_result(const int& hit_num, const int& miss_num, const int& cache_size, const int& block_size) {
+    float hit_rate = (float)hit_num / (float)(hit_num + miss_num), miss_rate = (float)miss_num / (float)(hit_num + miss_num);
+    cout << "Cache_size: " << cache_size << '\n'
+         << "Block_size: " << block_size << '\n'
+         << "Hit rate: " << fixed << setprecision(2) << hit_rate * 100 << "% (" << hit_num << "),  "
+         << "Miss rate: " << miss_rate * 100 << "% (" << miss_num << ")\n\n";
+    return;
+}
+void memory_access(const char& C, const unsigned int& cache_size, const unsigned int& block_size) {
+    int hit_num = 0, miss_num = 0, block_num = cache_size * 1024 / block_size;
+    if (C == 'I') {
+        vector<element> map(block_num, element());
+        for (int i = 0; i < I_Cache.size(); i++) {
+            unsigned int in = I_Cache[i] / block_size;
+            unsigned int index = in % block_num, tag = in / block_num;
+            if (map[index].valid == false) {  // compulsory miss
+                map[index].valid = true;
+                map[index].index = index;
+                map[index].tag = tag;
                 miss_num++;
             }
+            else {
+                if (map[index].tag == tag) {
+                    hit_num++;
+                }
+                else {
+                    map[index].tag = tag;
+                    miss_num++;
+                }
+            }
         }
-        access_num++;
     }
-}
-void print_result(void) {
-    float hit_rate = hit_num / access_num, miss_rate = miss_num / access_num;
-    cout << "Cache_size: " << CACHE_SIZE << '\n'
-         << "Block_size: " << BLOCK_SIZE << '\n'
-         << "Hit rate: " << fixed << setprecision(2) << hit_rate << "% (" << hit_num << "),  "
-         << "Miss rate: " << miss_rate << "% (" << miss_num << ")\n";
-    return;
+    else if (C == 'D') {
+        vector<element> map(block_num, element());
+        for (int i = 0; i < D_Cache.size(); i++) {
+            unsigned int in = D_Cache[i] / block_size;
+            unsigned int index = in % block_num, tag = in / block_num;
+            if (map[index].valid == false) {  // compulsory miss
+                map[index].valid = true;
+                map[index].index = index;
+                map[index].tag = tag;
+                miss_num++;
+            }
+            else {
+                if (map[index].tag == tag) {
+                    hit_num++;
+                }
+                else {
+                    map[index].tag = tag;
+                    miss_num++;
+                }
+            }
+        }
+    }
+    else {
+        return;
+    }
+    print_result(hit_num, miss_num, cache_size, block_size);
 }
 
 int main(void) {
     input();
-    memory_access();
-    print_result();
+    cout << "-----I-Cache Access-----\n\n";
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 5; j++) {
+            memory_access('I', cache[i], block[j]);
+        }
+    cout << "-----D-Cache Access-----\n\n";
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 5; j++) {
+            memory_access('D', cache[i], block[j]);
+        }
     return 0;
 }
