@@ -24,13 +24,19 @@ void input(void){
     ifs.open("DCACHE.txt", ifstream::in);
 
     unsigned int input;
-    while(ifs >> hex >> input) D_Cache.push_back(input);
+    while(ifs >> hex >> input){
+        input /= BLOCK_SIZE;
+        D_Cache.push_back(input);
+    }
     ifs.close();
 
 
     if(ifs.is_open()) throw("ifs has been opened already.\n");
     ifs.open("ICACHE.txt", ifstream::in);
-    while(ifs >> hex >> input) I_Cache.push_back(input);
+    while(ifs >> hex >> input){
+        input /= BLOCK_SIZE;
+        I_Cache.push_back(input);
+    }
     ifs.close();
 
     return;
@@ -40,9 +46,9 @@ void memory_access(char C){
     if(C=='I'){
         vector<element> map(block_num, element());
         for(int i=0; i<I_Cache.size(); i++){
-            unsigned int in = I_Cache[i] / BLOCK_SIZE;
-            unsigned int index = in % block_num, tag = in / block_num;
+            unsigned int index = I_Cache[i] % block_num, tag = I_Cache[i] / block_num;
             if(map[index].valid==false){ // compulsory miss
+                map[index].valid = true;
                 map[index].index = index;
                 map[index].tag = tag;
                 miss_num++;
@@ -63,8 +69,7 @@ void memory_access(char C){
     else if(C=='D'){
         vector<element> map(block_num, element());
         for(int i=0; i<D_Cache.size(); i++){
-            unsigned int in = D_Cache[i] / BLOCK_SIZE;
-            unsigned int index = in % block_num, tag = in / block_num;
+            unsigned int index = D_Cache[i] % block_num, tag = D_Cache[i] / block_num;
             if(map[index].valid==false){ // compulsory miss
                 map[index].index = index;
                 map[index].tag = tag;
@@ -84,7 +89,7 @@ void memory_access(char C){
         cout << "D-Cache Access:\n";
     }
     else{ return; }
-    print_result();
+    print_result(hit_num, miss_num);
 
 }
 void print_result(const int &hit_num, const int &miss_num){
