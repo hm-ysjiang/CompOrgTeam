@@ -74,7 +74,8 @@ void memory_access(const char &C, const unsigned int &cache_size, const unsigned
     else if(C=='D'){
         vector<element> map(block_num, element());
         for(int i=0; i<D_Cache.size(); i++){
-            unsigned int index = D_Cache[i] % block_num, tag = D_Cache[i] / block_num;
+            unsigned int in = D_Cache[i] / block_size;
+            unsigned int index = in % block_num, tag = in / block_num;
             if(map[index].valid==false){ // compulsory miss
                 map[index].valid = true;
                 map[index].index = index;
