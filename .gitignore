@@ -2,3 +2,5 @@
 projects.lnk
 Lab6/.vscode/
 Lab6/a.out
+Lab6/direct_mapped_cache
+Lab6/set_associative_cache
