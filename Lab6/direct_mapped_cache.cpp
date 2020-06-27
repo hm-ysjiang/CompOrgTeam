@@ -1,5 +1,7 @@
-#include <cmath>  // log2()
+#include <vector>
 #include <fstream>
+#include <iostream>
+#include <iomanip>
 using namespace std;
 
 int cache[] = {4, 16, 64, 256},
