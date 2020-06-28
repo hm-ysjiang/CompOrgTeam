@@ -9,14 +9,14 @@
 
 using namespace std;
 
-vector<uint32_t> _data;
+vector<unsigned int> _data;
 int siz[] = {1, 2, 4, 8, 16, 32, 64, 128},
     associa[] = {1, 2, 4, 8};
 float res[SIZ_SIZE][4];
 
 void readData() {
     ifstream in("LRU.txt", ios::in);
-    uint32_t t;
+    unsigned int t;
     while (in >> hex >> t) {
         _data.push_back(t);
     }
@@ -27,12 +27,12 @@ void test(int _cache_size_K, int _associa_WAY) {
     int cache_size_K = siz[_cache_size_K], associa_WAY = associa[_associa_WAY];
     int block_count = cache_size_K * 1024 / BLOCK_SIZE;
     int set_count = block_count / associa_WAY;
-    vector<vector<uint32_t>> cache(set_count, vector<uint32_t>());
+    vector<vector<unsigned int>> cache(set_count, vector<unsigned int>());
     int hit = 0, miss = 0;
     for (int i = 0; i < _data.size(); i++) {
-        uint32_t t = _data[i];
+        unsigned int t = _data[i];
         t /= BLOCK_SIZE;
-        uint32_t cache_idx = t % set_count, tag = t / set_count;
+        unsigned int cache_idx = t % set_count, tag = t / set_count;
         bool done = false;
         for (int j = 0; j < cache[cache_idx].size(); j++) {
             if (cache[cache_idx][j] == tag) {
